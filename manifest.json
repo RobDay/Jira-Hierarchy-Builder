@@ -1,0 +1,26 @@
+{
+	"name": "Jira Enhanceddment Suite",
+	"version": "1.0",
+	"manifest_version": 2,
+	"minimum_chrome_version": "20.0",
+	"description": "Jira Enhancement Suite- Fixing some Jira sillies",
+	"homepage_url": "https://github.com/RobDay",
+	"background": {
+    	"scripts": [ "background.js"],
+    	"persistent": false
+  	},
+	"content_scripts": [
+		{
+			"matches": [ "http://*/*", "https://*/*"],
+			"js": [
+				"jquery-2.0.2.min.js",
+				"content.js"
+			],
+			"run-at": "document_start"
+		}
+	],
+	"permissions": [
+		"background", "tabs", "https://issues.dowjones.net/*",
+	"https://*/*"
+  ]
+}
