@@ -83,7 +83,11 @@ function buildTreeNode(currentIssue){
 		if($.inArray(childIssueKey, keysInTable) != -1) {
 			log("	YES");
 			currentIssue.childrenIssues.push(issueObjects[childIssueKey]);
-			buildTreeNode(issueObjects[childIssueKey]);
+			if($.inArray(childIssueKey, processedKeys) == -1) {
+				log("Processing issue: " + childIssueKey);
+				buildTreeNode(issueObjects[childIssueKey]);
+
+			}
 		} else{
 			log("	NO");
 		}
@@ -93,6 +97,10 @@ function buildTreeNode(currentIssue){
 
 function reorderTable() {
 	log("In reorder table");
+	// $.each(issueObjects, function(key, issueObject) {
+	// 	log("Issue: "+ issueObject.key  + " has parent " + issueObject.parentIssuekey + " and has the following chilren count: " + issueObject.childrenIssueKeys.length);
+	// });
+	
 
 	//Let's build a tree from all of our keys
 	$.each(issueObjects, function(key, issueObject) {
@@ -104,6 +112,7 @@ function reorderTable() {
 			log("Already processed: "+issueObject.key);
 		}
 	});
+
 	tableIndex=0;
 	$.each(issueObjects, function(key, issueObject) {
 		if(issueObject.parentIssue.length == 0){
@@ -126,25 +135,25 @@ function orderIssueTable(currentIssue, indentLevel){
 		return;
 	}
 	else{
-		// if(indentLevel > 0){
-		// 	log("Indenting the row for key: " + currentIssue.key);
-		// 	myRow.find(".summary").css("padding-left", 30*indentLevel+"px");
-		// }
-		// if(myRow.index() != tableIndex) {
-		// 	log("Moving row");
-		// 	tableRows=$('#issuetable > tbody > tr');
-		// 	if(tableIndex == 0){ //If I need to move it to the first row
-		// 		log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
-		// 		myRow.insertBefore($($('#issuetable > tbody > tr')[0]));
-		// 	} else if(tableIndex == tableRows.length-1){ //If I need to move it to the last row
-		// 		log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
-		// 		myRow.insertAfter($($('#issuetable > tbody > tr')[tableRows.length-1]));
-		// 	} else {
-		// 		log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
-		// 		myRow.insertBefore($($('#issuetable > tbody > tr')[tableIndex+1]));
-		// 	}
-		// }
-		// tableIndex+=1;
+		if(indentLevel > 0){
+			log("Indenting the row for key: " + currentIssue.key);
+			myRow.find(".summary").css("padding-left", 30*indentLevel+"px");
+		}
+		if(myRow.index() != tableIndex) {
+			log("Moving row");
+			tableRows=$('#issuetable > tbody > tr');
+			if(tableIndex == 0){ //If I need to move it to the first row
+				log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
+				myRow.insertBefore($($('#issuetable > tbody > tr')[0]));
+			} else if(tableIndex == tableRows.length-1){ //If I need to move it to the last row
+				log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
+				myRow.insertAfter($($('#issuetable > tbody > tr')[tableRows.length-1]));
+			} else {
+				log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
+				myRow.insertBefore($($('#issuetable > tbody > tr')[tableIndex+1]));
+			}
+		}
+		tableIndex+=1;
 		log("Issue: "+ currentIssue.key + " at indent level " + indentLevel + " has parent " + currentIssue.parentIssue.key + " and has the following chilren: " + arrayElementsToString(currentIssue.childrenIssues));
 		$.each(currentIssue.childrenIssues, function(index, childIssue) {
 			// log("Here3");
