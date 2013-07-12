@@ -3,6 +3,7 @@
 	"version": "1.0",
 	"manifest_version": 2,
 	"minimum_chrome_version": "20.0",
+	"devtools_page": "devtools.html",
 	"description": "Jira Enhancement Suite- Fixing some Jira sillies",
 	"homepage_url": "https://github.com/RobDay",
 	"background": {

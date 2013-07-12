@@ -13,7 +13,7 @@ if(issuetable.length != 0){
 		key=$(cell).find("a").text();
 		log(key);
 		keysInTable.push(key);
-		// $(cell).css("background-color", "#9CBA7F");
+		$(cell).css("background-color", "#9CBA7F");
 
 		$.getJSON('/rest/api/2/issue/'+key +'?fields=issuelinks', function(data) {
 			var myIssue=new issue(data.key);
@@ -104,61 +104,52 @@ function reorderTable() {
 			log("Already processed: "+issueObject.key);
 		}
 	});
-	tableIndex=0;
-	$.each(issueObjects, function(key, issueObject) {
-		if(issueObject.parentIssue.length == 0){
-			//At this point, I want to draw out my tree keeping track of the hierarcy
-			log("Calling orderIssueTable");
-			orderIssueTable(issueObject, 0);
-		}
-		else{
-			log("Issue has a parent: "+ key);
-		}
-	});
+
+	// $.each(issueObjects, function(key, issueObject) {
+	// 	if(issueObject.parentIssue.length == 0){
+	// 		log("No parent: "+ key);
+	// 	}
+	// 	else{
+	// 		//At this point, I want to draw out my tree keeping track of the hierarcy
+	// 		log("Calling orderIssueTable");
+	// 		orderIssueTable(issueObject, 0, 0);
+	// 	}
+	// });
 
 }
 
-function orderIssueTable(currentIssue, indentLevel){
-	// log("In orderIssueTable with indentLevel: " + indentLevel);
-	myRow=$("tr[data-issuekey='" + currentIssue.key + "']");
-	if(myRow.length == 0){
-		log("Couldn't find a table row for issue: " + currentIssue.key);
-		return;
-	}
-	else{
-		// if(indentLevel > 0){
-		// 	log("Indenting the row for key: " + currentIssue.key);
-		// 	myRow.find(".summary").css("padding-left", 30*indentLevel+"px");
-		// }
-		// if(myRow.index() != tableIndex) {
-		// 	log("Moving row");
-		// 	tableRows=$('#issuetable > tbody > tr');
-		// 	if(tableIndex == 0){ //If I need to move it to the first row
-		// 		log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
-		// 		myRow.insertBefore($($('#issuetable > tbody > tr')[0]));
-		// 	} else if(tableIndex == tableRows.length-1){ //If I need to move it to the last row
-		// 		log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
-		// 		myRow.insertAfter($($('#issuetable > tbody > tr')[tableRows.length-1]));
-		// 	} else {
-		// 		log("Inserting issue: " + currentIssue.key + " at index: " + tableIndex);
-		// 		myRow.insertBefore($($('#issuetable > tbody > tr')[tableIndex+1]));
-		// 	}
-		// }
-		// tableIndex+=1;
-		log("Issue: "+ currentIssue.key + " at indent level " + indentLevel + " has parent " + currentIssue.parentIssue.key + " and has the following chilren: " + arrayElementsToString(currentIssue.childrenIssues));
-		$.each(currentIssue.childrenIssues, function(index, childIssue) {
-			// log("Here3");
-			orderIssueTable(childIssue, indentLevel+1);
-		});
-	}
+function orderIssueTable(currentIssue, tableIndex indentLevel){
+	// log("In orderIssueTable");
+	// myRow=$("tr[data-issuekey='" + currentIssue.key + "']");
+	// log("HERE1");
+	// if(myRow.length == 0){
+	// 	log("Couldn't find a table row for issue: " + currentIssue.key);
+	// 	return;
+	// }
+	// else{
+	// 	log("Here2");
+	// 	if(indentLevel > 0){
+	// 		log("Indenting the row for key: " + currentIssue.key);
+	// 		myRow.find(".summary").css("padding-left", 30*indentLevel+"px");
+	// 	}
+	// 	if(myRow.index() != tableIndex) {
+	// 		// log("Moving row");
+	// 		// tableRows=$('#issuetable > tbody > tr');
+	// 		// if(tableIndex == 0){ //If I need to move it to the first row
+	// 		// 	myRow.insertBefore($($('#issuetable > tbody > tr')[0]));
+	// 		// } else if(tableIndex == tableRows.length-1){ //If I need to move it to the last row
+	// 		// 	myRow.insertAfter($($('#issuetable > tbody > tr')[tableRows.length-1]));
+	// 		// } else {
+	// 		// 	myRow.insertBefore($($('#issuetable > tbody > tr')[tableIndex+1]));
+	// 		// }
+	// 	}
+	// 	$.each(currentIssue.childrenIssues, function(index, childIssue) {
+	// 		log("Here3");
+	// 		orderIssueTable(childIssue, tableIndex+1, indentLevel+1);
+	// 	});
+	// }
 }
 
 
 
-function arrayElementsToString(myArray) {
-	myString="";
-	$.each(myArray, function(index, element) {
-		myString+=", " + element.key;
-	});
-	return myString;
-}
+
