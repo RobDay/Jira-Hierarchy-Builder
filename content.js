@@ -1,48 +1,68 @@
-myCell="";
-issuetable = $('#issuetable');
-processedKeys=[]; //Holds keys as they get processed for their final structure
-if(issuetable.length != 0){
-	log("Found Issue Table");
-	log("The Table has " + $('#issuetable tbody tr').length + " rows");
 
-	keysInTable=[]; //Holds all keys found in the table
-	issueObjects={}; //Hold all issueObjects
-	rowsToProcess=$('#issuetable tbody tr').length; //Create an object to check for when all the rows have been processed with the API
-	$.each($('#issuetable .issuekey'), function(index, cell) {
-		log(index);
-		key=$(cell).find("a").text();
-		log(key);
-		keysInTable.push(key);
-		// $(cell).css("background-color", "#9CBA7F");
+updateTimer="";
+shouldAutoProcessTable=true;
+$(".navigator-content").bind('DOMSubtreeModified', function(event){
+	clearTimeout(updateTimer);
+	if(shouldAutoProcessTable){
+		updateTimer = setTimeout(function(){ 
+			log("Running function"); 
+			processTable();
+		}, 
+		500);
+	}
+ });
 
-		$.getJSON('/rest/api/2/issue/'+key +'?fields=issuelinks', function(data) {
-			var myIssue=new issue(data.key);
-			log("Received info for relationships for key:" +data.key);
-			$.each(data.fields.issuelinks, function(index, issueLink) {
-				relationshipType=issueLink.type.name;
-				if(relationshipType=="Child-Issue"){
-					if(issueLink.outwardIssue){ //This relationship is my child
-						log("Found child with key "+issueLink.outwardIssue.key);
-						myIssue.childrenIssueKeys.push(issueLink.outwardIssue.key);
-					} else if(issueLink.inwardIssue){ //This relationship is my parent
-						log("Found parent with key "+issueLink.inwardIssue.key);
-						myIssue.parentIssueKey=issueLink.inwardIssue.key;
+processTable();
+
+function processTable() {
+	shouldAutoProcessTable=false;
+	myCell="";
+	issuetable = $('#issuetable');
+	processedKeys=[]; //Holds keys as they get processed for their final structure
+	if(issuetable.length != 0){
+		log("Found Issue Table");
+		log("The Table has " + $('#issuetable tbody tr').length + " rows");
+
+		keysInTable=[]; //Holds all keys found in the table
+		issueObjects={}; //Hold all issueObjects
+		rowsToProcess=$('#issuetable tbody tr').length; //Create an object to check for when all the rows have been processed with the API
+		$.each($('#issuetable .issuekey'), function(index, cell) {
+			log(index);
+			key=$(cell).find("a").text();
+			log(key);
+			keysInTable.push(key);
+			// $(cell).css("background-color", "#9CBA7F");
+
+			$.getJSON('/rest/api/2/issue/'+key +'?fields=issuelinks', function(data) {
+				var myIssue=new issue(data.key);
+				log("Received info for relationships for key:" +data.key);
+				$.each(data.fields.issuelinks, function(index, issueLink) {
+					relationshipType=issueLink.type.name;
+					if(relationshipType=="Child-Issue"){
+						if(issueLink.outwardIssue){ //This relationship is my child
+							log("Found child with key "+issueLink.outwardIssue.key);
+							myIssue.childrenIssueKeys.push(issueLink.outwardIssue.key);
+						} else if(issueLink.inwardIssue){ //This relationship is my parent
+							log("Found parent with key "+issueLink.inwardIssue.key);
+							myIssue.parentIssueKey=issueLink.inwardIssue.key;
+						}
 					}
+				});
+				// issueObjects.push(myIssue);
+				issueObjects[myIssue.key]=myIssue;
+				rowsToProcess--;
+				if(rowsToProcess == 0){ //If this is the final callback
+					reorderTable();
 				}
 			});
-			// issueObjects.push(myIssue);
-			issueObjects[myIssue.key]=myIssue;
-			rowsToProcess--;
-			if(rowsToProcess == 0){ //If this is the final callback
-				reorderTable();
-			}
 		});
-	});
 
-} else{
+	} else{
 
-	log("Didn't find issue table");
+		log("Didn't find issue table");
+	}	
 }
+
 
 
 
@@ -124,6 +144,8 @@ function reorderTable() {
 			log("Issue has a parent: "+ key);
 		}
 	});
+	log("I AM HERE");
+	shouldAutoProcessTable=true;
 
 }
 
