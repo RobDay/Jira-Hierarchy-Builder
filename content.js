@@ -1,6 +1,21 @@
+String.prototype.format = String.prototype.f = function() {
+    var s = this,
+        i = arguments.length;
+    while (i--) {
+        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+    }
+    return s;
+};
 
 updateTimer="";
+MAXRESULTSTOPROCESS=250;
+APISEARCHBASE="/rest/api/2/search?jql={0}&fields=keys";
+APISEARCHBASEPAGINATED="{0}{1}".format(APISEARCHBASE, "&startAt={1}");
+SEARCHBOXIDENTIFIER=".advanced-search";
 shouldAutoProcessTable=true;
+
+
+
 $(".navigator-content").bind('DOMSubtreeModified', function(event){
 	clearTimeout(updateTimer);
 	if(shouldAutoProcessTable){
@@ -16,6 +31,46 @@ processTable();
 
 function processTable() {
 	shouldAutoProcessTable=false;
+	shouldProcessEveryPage=false;
+	allSearchKeys=[];
+	totalResults=0;
+	resultsPerPage=0;
+	searchText=$(SEARCHBOXIDENTIFIER).val();
+	log(searchText);
+	$.ajaxSetup( { "async": false } );
+	if(searchText != ""){
+		log("Searching for text: {0}".format(APISEARCHBASE.format(encodeURIComponent(searchText))));
+		$.getJSON(APISEARCHBASE.format(encodeURIComponent(searchText)), function(data) {
+		log(data);
+		totalResults=data.total;
+		resultsPerPage=data.maxResults;
+		if(totalResults<=MAXRESULTSTOPROCESS){
+			shouldProcessEveryPage=true;
+			$.each(data.issues, function(index, dict) {
+				allSearchKeys.push(dict.key);
+			});
+		}
+		log("Made it to here");
+		});
+		log("Total results: {0}; resultsPerPage: {1}; shouldProcessEveryPage: {2}".f(totalResults, resultsPerPage, shouldProcessEveryPage));
+		if(totalResults > resultsPerPage && shouldProcessEveryPage){
+
+			for(x=resultsPerPage; x<totalResults; x+=resultsPerPage){
+				log("X is {0}".format(x));
+				$.ajaxSetup( { "async": false } );
+				log("Searching for {0}".f(APISEARCHBASEPAGINATED.format(encodeURIComponent(searchText), x)));
+				$.getJSON(APISEARCHBASEPAGINATED.format(encodeURIComponent(searchText), x), function(data) {
+					log("Total results back is: {0}".f(data.issues.length));
+					$.each(data.issues, function(index, dict) {
+						allSearchKeys.push(dict.key);
+					});
+				});
+			}
+		}
+
+		$.ajaxSetup( { "async": true } );	
+	}
+	
 	myCell="";
 	issuetable = $('#issuetable');
 	processedKeys=[]; //Holds keys as they get processed for their final structure
@@ -193,3 +248,13 @@ function arrayElementsToString(myArray) {
 	});
 	return myString;
 }
+
+// String.prototype.format = String.prototype.f = function() {
+//     var s = this,
+//         i = arguments.length;
+//     while (i--) {
+//         s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+//     }
+//     return s;
+// };
+//first, checks if it isn't implemented yet
