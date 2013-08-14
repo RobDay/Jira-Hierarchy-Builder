@@ -116,14 +116,16 @@ function processTable() {
 						}
 					}
 				});
-				// issueObjects.push(myIssue);
 				issueObjects[myIssue.key]=myIssue;
 				rowsToProcess--;
 				if(rowsToProcess == 0){ //If this is the final callback
+					log("Printing keys in table");
+					log(keysInTable);
 					reorderTable();
 				}
 			});
 		});
+		// log(JSON.stringify(issueObjects));
 
 	} else{
 
@@ -202,16 +204,34 @@ function reorderTable() {
 	});
 
 	tableIndex=0;
-	$.each(issueObjects, function(key, issueObject) {
-		if(issueObject.parentIssue.length == 0){
-			//At this point, I want to draw out my tree keeping track of the hierarcy
-			log("Calling orderIssueTable");
-			orderIssueTable(issueObject, 0);
-		}
-		else{
-			log("Issue has a parent: "+ key);
+	$.each(keysInTable, function(index, key) {
+		log("The Key is: "+ key)
+		myIssueObject = issueObjects[key];
+		if(myIssueObject){
+			if(myIssueObject.parentIssue.length == 0){
+				//At this point, I want to draw out my tree keeping track of the hierarcy
+				log("Calling orderIssueTable");
+				orderIssueTable(myIssueObject, 0);
+			}
+			else{
+				log("Issue has a parent: "+ key);
+			}
+		} else{
+			log("Uh oh- didn't find object");
 		}
 	});
+
+
+	// $.each(issueObjects, function(key, issueObject) {
+	// 	if(issueObject.parentIssue.length == 0){
+	// 		//At this point, I want to draw out my tree keeping track of the hierarcy
+	// 		log("Calling orderIssueTable");
+	// 		orderIssueTable(issueObject, 0);
+	// 	}
+	// 	else{
+	// 		log("Issue has a parent: "+ key);
+	// 	}
+	// });
 	log("I AM HERE");
 	shouldAutoProcessTable=true;
 
