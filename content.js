@@ -1,3 +1,10 @@
+if($('#issuetable').length == 0){
+	log("Didn't find the issue table");
+	return;
+} else{
+	log("Found issue table- continuing");
+}
+
 String.prototype.format = String.prototype.f = function() {
     var s = this,
         i = arguments.length;
@@ -27,9 +34,15 @@ $(".navigator-content").bind('DOMSubtreeModified', function(event){
 	}
  });
 
+
+
 processTable();
 
 function processTable() {
+	if($('#issuetable tbody tr').length == 0){
+		log("Issue table has no rows, not processing further");
+		return;
+	}
 	shouldAutoProcessTable=false;
 	shouldProcessEveryPage=false;
 	allSearchKeys=[];
