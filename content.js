@@ -221,17 +221,6 @@ function reorderTable() {
 		}
 	});
 
-
-	// $.each(issueObjects, function(key, issueObject) {
-	// 	if(issueObject.parentIssue.length == 0){
-	// 		//At this point, I want to draw out my tree keeping track of the hierarcy
-	// 		log("Calling orderIssueTable");
-	// 		orderIssueTable(issueObject, 0);
-	// 	}
-	// 	else{
-	// 		log("Issue has a parent: "+ key);
-	// 	}
-	// });
 	log("I AM HERE");
 	shouldAutoProcessTable=true;
 
@@ -281,13 +270,3 @@ function arrayElementsToString(myArray) {
 	});
 	return myString;
 }
-
-// String.prototype.format = String.prototype.f = function() {
-//     var s = this,
-//         i = arguments.length;
-//     while (i--) {
-//         s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
-//     }
-//     return s;
-// };
-//first, checks if it isn't implemented yet
