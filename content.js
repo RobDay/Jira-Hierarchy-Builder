@@ -222,6 +222,7 @@ function reorderTable() {
 	});
 
 	log("I AM HERE");
+	styleAssigneeColumn();
 	shouldAutoProcessTable=true;
 
 }
@@ -261,6 +262,16 @@ function orderIssueTable(currentIssue, indentLevel){
 	}
 }
 
+function styleAssigneeColumn() {
+	log("In Style assignee Column");
+	userID=$("#header-details-user-fullname").attr("data-username").toLowerCase()
+	userLinks=$(".user-hover[rel=" + userID +"]");
+	$.each(userLinks, function(index, link) {
+		log("Styling a link");
+		$(link).css("background-color", "aquamarine");
+	});
+	log("Done with style assignee");
+}
 
 
 function arrayElementsToString(myArray) {
